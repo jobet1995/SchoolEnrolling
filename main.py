@@ -88,6 +88,30 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         error_message = f"error: {str(e)}"
         self.wfile.write(error_message.encode('utf-8'))
+
+    def do_DELETE(self):
+      try:
+        id = int(self.path.split('/')[-1])
+
+        conn = sqlite3.connect('database.sqlite')
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM students WHERE id=?',(id,))
+        conn.commit()
+        conn.close()
+
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        response_message = f"Deleted student record with ID: {id} from the database"
+        self.wfile.write(response_message.encode('utf-8'))
+
+      except Exception as e:
+        self.send_response(500)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        error_message = f"Error: {str(e)}"
+        self.wfile.write(error_message.encode('utf-8'))
+        
       
 httpd = HTTPServer(('', 8000), MyHandler)
 httpd.serve_forever()
