@@ -113,5 +113,11 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(error_message.encode('utf-8'))
         
       
-httpd = HTTPServer(('', 8000), MyHandler)
-httpd.serve_forever()
+def run(server_class=HTTPServer, handler_class=MyHandler, port=8080):
+  server_address = ('', port)
+  httpd = server_class(server_address, handler_class)
+  print(f'Starting httpd on port {port}...\n')
+  httpd.serve_forever()
+
+if __name__ == '__main__':
+  run()
