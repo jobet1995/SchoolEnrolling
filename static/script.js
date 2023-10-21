@@ -1,86 +1,70 @@
-$(function() {
-
-    var $formLogin = $('#login-form');
-    var $formLost = $('#lost-form');
-    var $formRegister = $('#register-form');
-    var $divForms = $('#div-forms');
-    var $modalAnimateTime = 300;
-    var $msgAnimateTime = 150;
-    var $msgShowTime = 2000;
-
-    $("form").submit(function () {
-        switch(this.id) {
-            case "login-form":
-                var $lg_username=$('#login_username').val();
-                var $lg_password=$('#login_password').val();
-                if ($lg_username == "ERROR") {
-                    msgChange($('#div-login-msg'), $('#icon-login-msg'), $('#text-login-msg'), "error", "glyphicon-remove", "Login error");
-                } else {
-                    msgChange($('#div-login-msg'), $('#icon-login-msg'), $('#text-login-msg'), "success", "glyphicon-ok", "Login OK");
-                }
-                return false;
-                break;
-            case "lost-form":
-                var $ls_email=$('#lost_email').val();
-                if ($ls_email == "ERROR") {
-                    msgChange($('#div-lost-msg'), $('#icon-lost-msg'), $('#text-lost-msg'), "error", "glyphicon-remove", "Send error");
-                } else {
-                    msgChange($('#div-lost-msg'), $('#icon-lost-msg'), $('#text-lost-msg'), "success", "glyphicon-ok", "Send OK");
-                }
-                return false;
-                break;
-            case "register-form":
-                var $rg_username=$('#register_username').val();
-                var $rg_email=$('#register_email').val();
-                var $rg_password=$('#register_password').val();
-                if ($rg_username == "ERROR") {
-                    msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "error", "glyphicon-remove", "Register error");
-                } else {
-                    msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "success", "glyphicon-ok", "Register OK");
-                }
-                return false;
-                break;
-            default:
-                return false;
-        }
-        return false;
+function sendHttpRequest(method, url, data) {
+  return fetch(url, {
+    method: method,
+    body: data,
+    headers: {
+      'Authorization': `Basic ${base64Credentials}`,
+    },
+  })
+    .then(response => {
+      if (response.status === 200) {
+        return response.text();
+      } else if (response.status === 401) {
+        return Promise.reject('Unauthorized');
+      } else {
+        return Promise.reject('Request failed');
+      }
     });
+}
 
-    $('#login_register_btn').click( function () { modalAnimate($formLogin, $formRegister) });
-    $('#register_login_btn').click( function () { modalAnimate($formRegister, $formLogin); });
-    $('#login_lost_btn').click( function () { modalAnimate($formLogin, $formLost); });
-    $('#lost_login_btn').click( function () { modalAnimate($formLost, $formLogin); });
-    $('#lost_register_btn').click( function () { modalAnimate($formLost, $formRegister); });
-    $('#register_lost_btn').click( function () { modalAnimate($formRegister, $formLost); });
+document.getElementById('login-button').addEventListener('click', function () {
+  const username = document.getElementById('login-username').value;
+  const password = document.getElementById('login-password').value;
+  const credentials = `${username}:${password}`;
+  const base64Credentials = btoa(credentials);
 
-    function modalAnimate ($oldForm, $newForm) {
-        var $oldH = $oldForm.height();
-        var $newH = $newForm.height();
-        $divForms.css("height",$oldH);
-        $oldForm.fadeToggle($modalAnimateTime, function(){
-            $divForms.animate({height: $newH}, $modalAnimateTime, function(){
-                $newForm.fadeToggle($modalAnimateTime);
-            });
-        });
-    }
+  sendHttpRequest('POST', '/login', null)
+    .then(responseData => {
+      alert('Login successful.');
+    })
+    .catch(error => {
+      alert('Login failed. Invalid username or password.');
+    });
+});
 
-    function msgFade ($msgId, $msgText) {
-        $msgId.fadeOut($msgAnimateTime, function() {
-            $(this).text($msgText).fadeIn($msgAnimateTime);
-        });
-    }
+document.getElementById('get-button').addEventListener('click', function () {
+  const queryParameter = 'someQueryData';
+  const url = `/get-route?data=${queryParameter}`;
+  sendHttpRequest('GET', url, null)
+    .then(responseData => {
+      alert('GET request succeeded. Response: ' + responseData);
+    })
+    .catch(error => {
+      alert('GET request failed. Error: ' + error);
+    });
+});
 
-    function msgChange($divTag, $iconTag, $textTag, $divClass, $iconClass, $msgText) {
-        var $msgOld = $divTag.text();
-        msgFade($textTag, $msgText);
-        $divTag.addClass($divClass);
-        $iconTag.removeClass("glyphicon-chevron-right");
-        $iconTag.addClass($iconClass + " " + $divClass);
-        setTimeout(function() {
-            msgFade($textTag, $msgOld);
-            $divTag.removeClass($divClass);
-            $iconTag.addClass("glyphicon-chevron-right");
-            $iconTag.removeClass($iconClass + " " + $divClass);
-      }, $msgShowTime);
-    }
+document.getElementById('put-button').addEventListener('click', function () {
+  const queryParameter = 'someQueryData';
+  const url = `/put-route?data=${queryParameter}`;
+  const data = 'Data to send in PUT request';
+  sendHttpRequest('PUT', url, data)
+    .then(responseData => {
+      alert('PUT request succeeded. Response: ' + responseData);
+    })
+    .catch(error => {
+      alert('PUT request failed. Error: ' + error);
+    });
+});
+
+document.getElementById('delete-button').addEventListener('click', function () {
+  const queryParameter = 'someQueryData';
+  const url = `/delete-route?data=${queryParameter}`;
+  sendHttpRequest('DELETE', url, null)
+    .then(responseData => {
+      alert('DELETE request succeeded. Response: ' + responseData);
+    })
+    .catch(error => {
+      alert('DELETE request failed. Error: ' + error);
+    });
 });
