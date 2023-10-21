@@ -1,5 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import sqlite3
+import base64
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -114,6 +115,43 @@ class MyHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         error_message = f"Error: {str(e)}"
+        self.wfile.write(error_message.encode('utf-8'))
+
+    def do_AUTHHEAD(self):
+      try:
+        self.send_response(401)
+        self.send_header('WWW-Authenticate', 'Basic realm=\"Login required\"')
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        
+      except Exception as e:
+        self.send_response(500)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        error_message = f"Error in do_AUTHHEAD: {str(e)}"
+        self.wfile.write(error_message.encode('utf-8'))
+
+    def do_login(self, authorization_header):
+      try:
+        credentials = authorization_header.split(' ')[1]
+        credentials = base64.b64decode(credentials).decode('utf-8')
+        username, password = credentials.split(':')
+
+        if username == 'admin' and password == 'admin':
+          self.send_response(200)
+          self.send_header('Content-type', 'text/plain')
+          self.end_headers()
+          response_message = "Login successful."
+        else:
+          self.do_AUTHHEAD()
+          response_message = "Login failed. Invalid username or password."
+        self.wfile.write(response_message.encode('utf-8'))
+
+      except Exception as e:
+        self.send_response(500)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        error_message = f"Error in do_login: {str(e)}"
         self.wfile.write(error_message.encode('utf-8'))
   
 def run(server_class=HTTPServer, handler_class=MyHandler, port=8080):
