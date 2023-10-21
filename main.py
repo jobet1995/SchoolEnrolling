@@ -43,12 +43,20 @@ class MyHandler(BaseHTTPRequestHandler):
     def do_POST(self):
       try:
         content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        print(post_data)
+        body = self.rfile.read(content_length).decode('utf-8')
+
+        conn = sqlite3.connect('database.sqlite')
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO students(name,contact_phone, contact_email, contact_address, application_date, application_status, program_applying_for, test_scores,             transcripts, recommendation_letters, application_fee_payment_status, application_essays, application_reviewer)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',(body))
+        conn.commit()
+        conn.close()
+
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        self.wfile.write(bytes(post_data, 'utf8'))
+        response_message = "Received POST data and inserted into the database."
+        self.wfile.write(response_message.encode('utf-8'))
+        
       except Exception as e:
         self.send_response(500)
         self.send_header('Content-type','text/html')
@@ -60,10 +68,18 @@ class MyHandler(BaseHTTPRequestHandler):
       try:
         content_length = int(self.headers.get('Content-Length'))
         body = self.rfile.read(content_length).decode('utf-8')
+        id = int(self.path.split('/')[-1])
+
+        conn = sqlite3.connect('database.sqlite')
+        cursor = conn.cursor()
+        cursor.execute('UPDATE students SET name=? WHERE id=?',(body, id))
+        conn.commit()
+        conn.close()
+        
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        response_message = "Received PUT data:\n" + body
+        response_message = f"Updated student record with ID: {id} in the database"
         self.wfile.write(response_message.encode('utf-8'))
         
       except Exception as e:
