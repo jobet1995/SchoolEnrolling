@@ -1,4 +1,5 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import sqlite3
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -9,6 +10,21 @@ class MyHandler(BaseHTTPRequestHandler):
           self.end_headers()
           response_message = "Response GET Request"
           self.wfile.write(response_message.encode(encoding='utf-8'))
+
+        elif self.path == '/database':
+          conn = sqlite3.connect('database.sqlite')
+          c = conn.cursor()
+          c.execute('SELECT * FROM students')
+          database = c.fetchall()
+          conn.close()
+
+          self.send_response(200)
+          self.send_header('Content-type', 'text/plain')
+          self.end_headers()
+          response_message = "database:\n"
+          for database in database:
+            response_message += f"{database[0]}. {database[1]}\n"
+          self.wfile.write(response_message.encode('utf-8'))
             
         else:
           self.send_response(400)
