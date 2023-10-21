@@ -40,5 +40,15 @@ class MyHandler(BaseHTTPRequestHandler):
         error_message = f"error: {str(e)}"
         self.wfile.write(bytes(error_message, 'utf8'))
 
+    def do_PUT(self):
+      try:
+        content-length = int(self.headers['Content-Length'])
+        body = self.rfile.read(content_length)
+        self.end_headers()
+        response_message = "Received PUT Data: \n" + body
+        error_message = f"Error: {str(e)}"
+        self.wfile.write(error_message.encode('utf-8'))
+      except Exception as e
+      
 httpd = HTTPServer(('', 8000), MyHandler)
 httpd.serve_forever()
