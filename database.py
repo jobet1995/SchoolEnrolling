@@ -101,7 +101,8 @@ try:
         CREATE TABLE Users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           uname TEXT,
-          pword TEXT
+          pword TEXT,
+          email TEXT
         )
     ''')
 
