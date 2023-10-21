@@ -8,8 +8,12 @@ class MyHandler(BaseHTTPRequestHandler):
           self.send_response(200)
           self.send_header('Content-type', 'text/html')
           self.end_headers()
-          response_message = "Response GET Request"
-          self.wfile.write(response_message.encode(encoding='utf-8'))
+
+          with open('templates/index.html', 'rb') as html_file:
+            respose_message = html_file.read()
+          self.wfile.write(respose_message)
+          ##response_message = "Response GET Request"
+          ##self.wfile.write(response_message.encode(encoding='utf-8'))
 
         elif self.path == '/database':
           conn = sqlite3.connect('database.sqlite')
