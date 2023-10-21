@@ -13,13 +13,14 @@ try:
             contact_address TEXT,
             application_date TEXT,
             application_status TEXT,
-            program_applying_for TEXT,
+            program_course TEXT,
             test_scores TEXT,
             transcripts TEXT,
             recommendation_letters TEXT,
             application_fee_payment_status TEXT,
             application_essays TEXT,
             application_reviewer TEXT
+            FOREIGN KEY (program_course) REFERENCES program_courses(id)
         )
     ''')
 
