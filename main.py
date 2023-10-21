@@ -1,5 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import sqlite3
+import socketserver
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -111,13 +112,17 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         error_message = f"Error: {str(e)}"
         self.wfile.write(error_message.encode('utf-8'))
+
         
+def serve_html():
+  try:
+    port = 8080
+    with socketserver.TCPServer(("", port), MyHandler) as httpd:
+      print(f"Serving at port {port}")
+      httpd.server_forever()
       
-def run(server_class=HTTPServer, handler_class=MyHandler, port=8080):
-  server_address = ('', port)
-  httpd = server_class(server_address, handler_class)
-  print(f'Starting httpd on port {port}...\n')
-  httpd.serve_forever()
+  except KeyboardInterrupt:
+    print("Server Terminated")
 
 if __name__ == '__main__':
-  run()
+  serve_html()
