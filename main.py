@@ -42,13 +42,20 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self):
       try:
-        content-length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
+        content_length = int(self.headers.get('Content-Length'))
+        body = self.rfile.read(content_length).decode('utf-8')
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        response_message = "Received PUT Data: \n" + body
-        error_message = f"Error: {str(e)}"
+        response_message = "Received PUT data:\n" + body
+        self.wfile.write(response_message.encode('utf-8'))
+        
+      except Exception as e:
+        self.send_response(500)
+        self.send_header('Content-type','text/plain')
+        self.end_headers()
+        error_message = f"error: {str(e)}"
         self.wfile.write(error_message.encode('utf-8'))
-      except Exception as e
       
 httpd = HTTPServer(('', 8000), MyHandler)
 httpd.serve_forever()
