@@ -1,5 +1,6 @@
 { pkgs }: {
   deps = [
+    pkgs.docker_compose
     pkgs.nodejs-16_x
     pkgs.python38Full
   ];

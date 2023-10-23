@@ -106,6 +106,26 @@ try:
         )
     ''')
 
+    c.execute('''
+         CREATE TABLE subjects (
+            id INTEGER PRIMARY    KEY AUTOINCREMENT,
+            subject_name TEXT NOT NULL,
+            time TEXT,
+            days TEXT
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE teachers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            teacher_name TEXT NOT NULL,
+            email TEXT,
+            phone_number TEXT,
+            subject_taught_id INTEGER,
+            FOREIGN KEY (subject_taught_id) REFERENCES subjects(id)
+        )
+    ''')
+
+
     conn.commit()
     conn.close()
 except Exception as e:
