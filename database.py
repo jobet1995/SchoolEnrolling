@@ -1,7 +1,7 @@
 import sqlite3
 
 try:
-    conn = sqlite3.connect('enroll.sql')
+    conn = sqlite3.connect('enroll.sqlite')
     c = conn.cursor()
 
     c.execute('''
@@ -19,7 +19,7 @@ try:
             recommendation_letters TEXT,
             application_fee_payment_status TEXT,
             application_essays TEXT,
-            application_reviewer TEXT
+            application_reviewer TEXT,
             FOREIGN KEY (program_course) REFERENCES program_courses(id)
         )
     ''')
@@ -110,6 +110,8 @@ try:
          CREATE TABLE subjects (
             id INTEGER PRIMARY    KEY AUTOINCREMENT,
             subject_name TEXT NOT NULL,
+            program_course_id INTEGER,
+    FOREIGN KEY (program_course_id) REFERENCES program_courses(id)
             time TEXT,
             days TEXT
         )
@@ -124,6 +126,16 @@ try:
             FOREIGN KEY (subject_taught_id) REFERENCES subjects(id)
         )
     ''')
+    c.execute('''
+    CREATE TABLE program_courses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    program_name TEXT NOT NULL,
+    application_deadline TEXT,
+    available_slots INTEGER,
+    program_requirements TEXT
+       )
+   ''')
+  
   
     conn.commit()
     conn.close()
