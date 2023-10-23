@@ -1,7 +1,7 @@
 import sqlite3
 
 try:
-    conn = sqlite3.connect('enroll.sqlite')
+    conn = sqlite3.connect('enroll.sql')
     c = conn.cursor()
 
     c.execute('''
@@ -124,8 +124,7 @@ try:
             FOREIGN KEY (subject_taught_id) REFERENCES subjects(id)
         )
     ''')
-
-
+  
     conn.commit()
     conn.close()
 except Exception as e:
