@@ -1,8 +1,15 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import sqlite3
 import base64
+import json
 
 class MyHandler(BaseHTTPRequestHandler):
+
+    def send_json_response(self, response_data, status_code=200):
+        self.send_response(status_code)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(response_data).encode())
     def do_GET(self):
       try:
         if self.path == '/':
