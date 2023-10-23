@@ -18,7 +18,7 @@ function Login(){
   };
 
   return(
-    <div className={containerClass}>
+    <div className="container">
       <h2>LoginPage</h2>
       {isLoggedIn ? (
       <div>
