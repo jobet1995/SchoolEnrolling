@@ -52,6 +52,14 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
+name = "bootstrap4"
+version = "0.1.0"
+description = "Bootstrap 4, packaged for Python."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "certifi"
 version = "2022.9.24"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -210,6 +218,14 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "optional-django"
+version = "0.3.0"
+description = "Utils for providing optional support for django"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -294,6 +310,18 @@ validation = ["pydantic (>=1.7.4)"]
 global = ["appdirs (>=1.4.4)"]
 gen_docs = ["pytoolconfig", "sphinx-rtd-theme (>=1.0.0)", "sphinx-autodoc-typehints (>=1.18.1)", "sphinx (>=4.5.0)"]
 doc = ["sphinx (>=4.5.0)", "tabulate (>=0.8.9)"]
+
+[[package]]
+name = "react"
+version = "4.3.0"
+description = "Server-side rendering of React components with data from your Python system"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+optional-django = "0.3.0"
+requests = ">=2.5.0"
 
 [[package]]
 name = "replit"
@@ -478,13 +506,14 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "f328c469a46d9cb95c79b10c69318f07ccca3f40cc6eb43ef51c87ad2ff1879b"
+content-hash = "735385ecc4f0097391c60f226d0e4b9d18230fd06c213e5f41e81eb50f9c9309"
 
 [metadata.files]
 aiohttp = []
 aiosignal = []
 async-timeout = []
 attrs = []
+bootstrap4 = []
 certifi = []
 charset-normalizer = []
 click = []
@@ -500,6 +529,7 @@ jinja2 = []
 markupsafe = []
 multidict = []
 numpy = []
+optional-django = []
 packaging = []
 parso = []
 pluggy = []
@@ -507,6 +537,7 @@ pyflakes = []
 pyparsing = []
 python-lsp-jsonrpc = []
 pytoolconfig = []
+react = []
 replit = []
 replit-python-lsp-server = []
 requests = []
