@@ -35,6 +35,16 @@ function Login(){
             onchange={(e) => setUsername(e.target.value)}
           />
         </div>
+        <div className="mb-3">
+          <input
+            type="password"
+            className="form-control"
+            placeholder="Password"
+            value={password}
+            onchange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button type="button" className="btn btn-primary" onClick={handleLogin}>
       </form>
       )}
     </div>
