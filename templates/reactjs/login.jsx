@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './css/styles.css';
 
 function Login(){
   const [username, setUsername] = useState('');
