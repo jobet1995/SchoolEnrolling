@@ -50,11 +50,11 @@ class MyHandler(BaseHTTPRequestHandler):
           
       except Exception as e:
           self.send_json_response({'error': str(e)}, status_code=500)
-          #self.send_response(500)
-          #self.send_header('Content-type', 'text/plain')
-          #self.end_headers()
-          #error_message = f"Error: {str(e)}"
-          #self.wfile.write(error_message.encode('utf-8'))
+          self.send_response(500)
+          self.send_header('Content-type', 'text/plain')
+          self.end_headers()
+          error_message = f"Error: {str(e)}"
+          self.wfile.write(error_message.encode('utf-8'))
             
     def do_POST(self):
       try:
@@ -68,18 +68,19 @@ class MyHandler(BaseHTTPRequestHandler):
         conn.close()
         self.send_json_response({'message': 'Received POST data and inserted into the database.'})
         
-        #self.send_response(200)
-        #self.send_header('Content-type', 'text/plain')
-        #self.end_headers()
-        #response_message = "Received POST data and inserted into the database."
-        #self.wfile.write(response_message.encode('utf-8'))
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        response_message = "Received POST data and inserted into the database."
+        self.wfile.write(response_message.encode('utf-8'))
         
       except Exception as e:
-        #self.send_response(500)
-        #self.send_header('Content-type','text/html')
-        #self.end_headers()
-        #error_message = f"error: {str(e)}"
-        #self.wfile.write(bytes(error_message, 'utf8'))
+        self.send_json_response({'error': str(e)}, status_code=500)
+        self.send_response(500)
+        self.send_header('Content-type','text/html')
+        self.end_headers()
+        error_message = f"error: {str(e)}"
+        self.wfile.write(bytes(error_message, 'utf8'))
         self.send_json_response({'error': str(e)}, status_code=500)
 
     def do_PUT(self):
@@ -93,6 +94,7 @@ class MyHandler(BaseHTTPRequestHandler):
         cursor.execute('UPDATE students SET name=? WHERE id=?',(body, id))
         conn.commit()
         conn.close()
+        conn.send_json_response({'message': 'Received PUT data and updated the database.'})
         
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
@@ -101,6 +103,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(response_message.encode('utf-8'))
         
       except Exception as e:
+        self.send_json_response({'error': str(e)}, status_code=500)
         self.send_response(500)
         self.send_header('Content-type','text/plain')
         self.end_headers()
@@ -116,6 +119,7 @@ class MyHandler(BaseHTTPRequestHandler):
         cursor.execute('DELETE FROM students WHERE id=?',(id,))
         conn.commit()
         conn.close()
+        conn.send_json_response({'message': 'Received DELETE data and deleted the database.'})
 
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
@@ -124,6 +128,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(response_message.encode('utf-8'))
 
       except Exception as e:
+        self.send_json_response({'error': str(e)}, status_code=500)
         self.send_response(500)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
