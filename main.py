@@ -10,6 +10,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps(response_data).encode())
+      
     def do_GET(self):
       try:
         if self.path == '/':
@@ -29,6 +30,7 @@ class MyHandler(BaseHTTPRequestHandler):
           c.execute('SELECT * FROM students')
           database = c.fetchall()
           conn.close()
+          self.send_json_response({'database':database})
 
           self.send_response(200)
           self.send_header('Content-type', 'text/plain')
@@ -39,18 +41,20 @@ class MyHandler(BaseHTTPRequestHandler):
           self.wfile.write(response_message.encode('utf-8'))
             
         else:
-          self.send_response(400)
-          self.send_header('Content-type','text/plain')
-          self.end_headers()
-          response_message = "Not Found"
-          self.wfile.write(response_message.encode(encoding='utf-8'))
+          #self.send_response(400)
+          #self.send_header('Content-type','text/plain')
+          #self.end_headers()
+          #response_message = "Not Found"
+          #self.wfile.write(response_message.encode(encoding='utf-8'))
+          self.send_json_response({'error': 'Not Found'}, status_code=404)
           
       except Exception as e:
-          self.send_response(500)
-          self.send_header('Content-type', 'text/plain')
-          self.end_headers()
-          error_message = f"Error: {str(e)}"
-          self.wfile.write(error_message.encode('utf-8'))
+          self.send_json_response({'error': str(e)}, status_code=500)
+          #self.send_response(500)
+          #self.send_header('Content-type', 'text/plain')
+          #self.end_headers()
+          #error_message = f"Error: {str(e)}"
+          #self.wfile.write(error_message.encode('utf-8'))
             
     def do_POST(self):
       try:
@@ -62,19 +66,21 @@ class MyHandler(BaseHTTPRequestHandler):
         cursor.execute('INSERT INTO students(name,contact_phone, contact_email, contact_address, application_date, application_status, program_applying_for, test_scores,             transcripts, recommendation_letters, application_fee_payment_status, application_essays, application_reviewer)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',(body))
         conn.commit()
         conn.close()
-
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        response_message = "Received POST data and inserted into the database."
-        self.wfile.write(response_message.encode('utf-8'))
+        self.send_json_response({'message': 'Received POST data and inserted into the database.'})
+        
+        #self.send_response(200)
+        #self.send_header('Content-type', 'text/plain')
+        #self.end_headers()
+        #response_message = "Received POST data and inserted into the database."
+        #self.wfile.write(response_message.encode('utf-8'))
         
       except Exception as e:
-        self.send_response(500)
-        self.send_header('Content-type','text/html')
-        self.end_headers()
-        error_message = f"error: {str(e)}"
-        self.wfile.write(bytes(error_message, 'utf8'))
+        #self.send_response(500)
+        #self.send_header('Content-type','text/html')
+        #self.end_headers()
+        #error_message = f"error: {str(e)}"
+        #self.wfile.write(bytes(error_message, 'utf8'))
+        self.send_json_response({'error': str(e)}, status_code=500)
 
     def do_PUT(self):
       try:
