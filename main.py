@@ -41,11 +41,11 @@ class MyHandler(BaseHTTPRequestHandler):
           self.wfile.write(response_message.encode('utf-8'))
             
         else:
-          #self.send_response(400)
-          #self.send_header('Content-type','text/plain')
-          #self.end_headers()
-          #response_message = "Not Found"
-          #self.wfile.write(response_message.encode(encoding='utf-8'))
+          self.send_response(400)
+          self.send_header('Content-type','text/plain')
+          self.end_headers()
+          response_message = "Not Found"
+          self.wfile.write(response_message.encode(encoding='utf-8'))
           self.send_json_response({'error': 'Not Found'}, status_code=404)
           
       except Exception as e:
