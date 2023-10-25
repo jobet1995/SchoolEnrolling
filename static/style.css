@@ -37,4 +37,38 @@ body {
     border: none;
 }
 
+.navbar {
+  background-color: #f4f4f4;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.navbar-brand {
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000;
+}
+
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-menu li {
+  margin-left: 10px;
+}
+
+.navbar-menu li a {
+  color: #000;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.navbar-menu li a:hover {
+  color: #007BFF;
+}
