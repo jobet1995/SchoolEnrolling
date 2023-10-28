@@ -12,25 +12,21 @@ def execute_sql(query):
 
 class TestDatabase(unittest.TestCase):
 
+  @classmethod
   def setUp(self):
-    conn = sqlite3.connect('database.sqlite')
-    cursor = conn.cursor()
-    
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='programs_courses'")
-    table_exists = cursor.fetchone()
-
-    if not table_exists:
-      conn.execute(
-        '''
-            CREATE TABLE programs_courses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                program_name TEXT,
-                application_deadline TEXT,
-                available_slots INTEGER,
-                program_requirements TEXT
-            )
-        '''
-      )
+      conn = sqlite3.connect('database.sqlite')
+      cursor = conn.cursor()
+      cursor.execute('''
+          CREATE TABLE IF NOT EXISTS programs_courses (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              program_name TEXT,
+              application_deadline TEXT,
+              available_slots INTEGER,
+              program_requirements TEXT
+          )
+      ''')
+      conn.commit()
+      conn.close()
 
     conn.execute("INSERT INTO programs_courses(program_name, application_deadline, available_slots, program_requirements) VALUES('Python Programming', '2020-05-01', 5, 'Python Programming Course')")
     conn.execute("INSERT INTO programs_courses(program_name, application_deadline, available_slots, program_requirements) VALUES('Java Programming', '2020-05-01', 5, 'Java Programming Course')")
