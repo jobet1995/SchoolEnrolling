@@ -1,47 +1,54 @@
+import sqlite3
 import unittest
-import requests
 
-class TestProgramRecordHandler(unittest.TestCase):
+def execute_sql(query):
+  conn = sqlite3.connect('database.sqlite')
+  cursor = conn.cursor()
+  cursor.execute(query)
+  conn.commit()
+  result = cursor.fetchall()
+  conn.close()
+  return result
 
-  def test_do_GET(self):
-    response = requests.get('http://localhost:8080/')
-    self.assertEqual(response.status_code, 200)
-    print("GET / - Success")
+class TestDatabase(unittest.TestCase):
 
-    response = requests.get('http://localhost:8080/database')
-    self.assertEqual(response.status_code, 200)
-    self.assertTrue('database' in response.json())
-    print("GET /database - Success")
+  def setUp(self):
+    conn = sqlite3.connect('database.sqlite')
+    cursor = conn.cursor()
     
-    response = requests.get('http://localhost:8080/nonexistent')
-    self.assertEqual(response.status_code, 404)
-    self.assertTrue('error' in response.json())
-    print("GET /nonexistent - Error: Not Found")
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='programs_courses'")
+    table_exists = cursor.fetchone()
 
-  
-  def test_do_POST(self):
-    data = {
-      'program_name': 'Program A',
-      'application_deadline': '2023-12-31',
-      'available_slots': 50,
-      'program_requirements': 'Bachelor\'s degree'
-    }
+    if not table_exists:
+      conn.execute(
+        '''
+            CREATE TABLE programs_courses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                program_name TEXT,
+                application_deadline TEXT,
+                available_slots INTEGER,
+                program_requirements TEXT
+            )
+        '''
+      )
 
-    response = requests.post('htt://localhost:8080/database', json=data)
-    self.assertEqual(response.status_code, 200)
-    print("POST /database - Success")
+    conn.execute("INSERT INTO programs_courses(program_name, application_deadline, available_slots, program_requirements) VALUES('Python Programming', '2020-05-01', 5, 'Python Programming Course')")
+    conn.execute("INSERT INTO programs_courses(program_name, application_deadline, available_slots, program_requirements) VALUES('Java Programming', '2020-05-01', 5, 'Java Programming Course')")
+    conn.commit()
+    conn.close()
 
-  def test_do_PUT(self):
-    data = {
-        'program_name': 'Updated Program A',
-        'application_deadline': '2023-12-31',
-        'available_slots': 60,
-        'program_requirements': 'Bachelor\'s degree with honors'
-    }
+  def tearDown(self):
+    conn = sqlite3.connect('database.sqlite')
+    conn.execute("DROP TABLE IF EXISTS programs_courses")
+    conn.commit()
+    conn.close()
 
-    response = requests.put('http://localhost:8080/database/Program A', json=data)
-    self.assertEqual(response.status_code, 200)
-    print("PUT /database/1 - Success")
+  def test_execute_sql(self):
+    query = "SELECT * programs_courses"
+    result = execute_sql(query)
+    self.assertEqual(len(result), 2)
+    self.assertEqual(result[0], (1, 'Python Programming', '2020-05-01', 5, 'Python Programming Course'))
+    self.assertEqual(result[1], (2, 'Java Programming', '2020-05-01', 5, 'Java Programming Course'))
 
 if __name__ == '__main__':
   unittest.main()
