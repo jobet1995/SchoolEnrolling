@@ -45,6 +45,60 @@ class ProgramRecordHandler(BaseHTTPRequestHandler):
       error_message = f"Error: {str(e)}"
       self.wfile.write(error_message.encode('utf-8'))
 
+  def do_POST(self):
+    try:
+      content_length = int(self.headers['Content-Length'])
+      body = self.rfile.read(content_length).decode('utf-8')
+
+      conn = sqlite3.connect('database.py')
+      cursor = conn.cursor()
+      cursor.execute('INSERT INTO programs_courses(program_name, application_deadline, available_slots, program_requirements)VALUES(?,?,?,?)', (body,))
+      conn.commit()
+      conn.close()
+      self.send_json_response({'message' : 'Received POST Data and Inserted into the database.'})
+
+      self.send_response(200)
+      self.send_header('Content-type', 'text/plain')
+      self.end_headers()
+      response_message = "Received POST data and inserted into the database."
+      self.wfile.write(response_message.encode('utf-8'))
+
+    except Exception as e:
+      self.send_json_response({'error': str(e)}, status_code=500)
+      self.send_response(500)
+      self.send_header('Content-type', 'text/html')
+      self.end_headers()
+      error_message = f"Error: {str(e)}"
+      self.wfile.write(bytes(error_message, 'utf8'))
+      self.send_json_response({'error': str(e)}, status_code=500)
+
+  def do_PUT(self):
+    try:
+      content_length = int(self.headers.get('Content-Length'))
+      body = self.rfile.read(content_length).decode('utf-8')
+      id = int(self.path.split('/')[-1])
+      
+      conn = sqlite3.connect('database.py')
+      cursor = conn.cursor()
+      cursor.execute('UPDATE programs_courses SET program_name=?, application_deadline=?, available_slots=?, program_requirements=? WHERE id=?', (body, id))
+      conn.commit()
+      conn.close()
+      self.send_json_response({'message': f'Updated student record with ID: {id} in the database.'})
+
+      self.send_response(200)
+      self.send_header('Content-type','text/plain')
+      self.end_headers()
+      response_message = f"Updated student record with ID: {id} in the database"
+      self.wfile.write(response_message.encode('utf-8'))
+
+    except Exception as e:
+      self.send_json_response({'error': str(e)}, status_code=500)
+      self.send_response(500)
+      self.send_header('Content-type', 'text/plain')
+      self.end_headers()
+      error_message = f"Error: {str(e)}"
+      self.wfile.write(error_message.encode('utf-8'))
+
 
 def run(server_class=HTTPServer, handler_class=ProgramRecordHandler, port=8080):
   server_address = ('', port)
